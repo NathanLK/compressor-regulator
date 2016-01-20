@@ -1,0 +1,36 @@
+void setup() {
+  pinMode(7, OUTPUT);     // controls relay 1
+  pinMode(8, OUTPUT);     // controls LED
+  digitalWrite(8, HIGH);  //set pin 8 to high, we are using this as a power source to run the LED. (pin 8 is what is connected to relay's COM)
+  pinMode(2, INPUT);      // button
+  Serial.begin(9600);
+}
+
+int timestamp,state = 1;
+
+void loop() {
+  int a = digitalRead(2);
+  
+  if (state==1) {
+    if (a==1) {
+      Serial.println("button pressed");
+      timestamp = millis();
+      state=2;
+    }
+  }
+  if (state==2) {
+    digitalWrite(7, HIGH);
+    if ((millis()-timestamp)>5000 || a!=1) {
+      Serial.println(millis()-timestamp);
+      Serial.println(a);
+      digitalWrite(7, LOW);
+      state=3;
+    }
+  }
+  if (state==3) {
+    Serial.println("going to do absolutely nothing for 5 seconds. sorry. sleeping.");
+    delay(5000);
+    Serial.println("yawn, woke up. going to run again!");
+    state=1;
+  }
+}
